@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ToDoリスト</title>
+  <link rel="stylesheet" href="../static/styles.css">
+</head>
+
+<body>
+  <h1>ToDoアプリ</h1>
+
+  <!-- 新しいToDoの登録 -->
+  <form action="{{ url_for('create_todo') }}" method="POST" class="todo-form">
+    <input type="text" name="description" placeholder="新しいToDoを入力" required>
+    <button type="submit" class="button">登録</button>
+  </form>
+
+  <!-- ToDoの表示 -->
+   <p class="list-todo">ToDoリスト</p>
+  {% for todo in todos %}
+    {% if todo[2] == 0 %}
+    <form method="POST" class="list-form">
+      <p>{{ todo[1] }}</p>
+      <input type="hidden" name="todo_id" value="{{ todo[0] }}">
+      <div>
+        <button type="submit" formaction="{{ url_for('update_todo') }}" class="button">完了</button>
+        <button type="submit" formaction="{{ url_for('delete_todo') }}" class="delete-button">削除</button>
+      </div>
+    </form>
+    {% endif %}
+  {% endfor %}
+
+  <!-- 完了したToDoの表示 -->
+  <p class="done-todo">完了したToDo</p>
+  {% for todo in todos %}
+    {% if todo[2] == 1 %}
+    <form method="POST" class="list-form">
+      <p>{{ todo[1] }}</p>
+      <input type="hidden" name="todo_id" value="{{ todo[0] }}">
+      <button type="submit" formaction="{{ url_for('delete_todo') }}" class="delete-button">削除</button>
+    </form>
+    {% endif %}
+  {% endfor %}
+
+</body>
+</html>
