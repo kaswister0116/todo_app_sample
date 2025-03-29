@@ -13,6 +13,7 @@
   <!-- 新しいToDoの登録 -->
   <form action="{{ url_for('create_todo') }}" method="POST" class="todo-form">
     <input type="text" name="description" placeholder="新しいToDoを入力" required>
+    <input type="date" name="deadline" class="deadline-input">
     <button type="submit" class="button">登録</button>
   </form>
 
@@ -21,7 +22,12 @@
   {% for todo in todos %}
     {% if todo[2] == 0 %}
     <form method="POST" class="list-form">
-      <p>{{ todo[1] }}</p>
+      <div class="todo-content">
+        <p>{{ todo[1] }}</p>
+        {% if todo[6] %}
+        <p class="deadline">期限: {{ todo[6].strftime('%Y-%m-%d') }}</p>
+        {% endif %}
+      </div>
       <input type="hidden" name="todo_id" value="{{ todo[0] }}">
       <div>
         <button type="submit" formaction="{{ url_for('update_todo') }}" class="button">完了</button>
@@ -36,7 +42,12 @@
   {% for todo in todos %}
     {% if todo[2] == 1 %}
     <form method="POST" class="list-form">
-      <p>{{ todo[1] }}</p>
+      <div class="todo-content">
+        <p>{{ todo[1] }}</p>
+        {% if todo[6] %}
+        <p class="deadline">期限: {{ todo[6].strftime('%Y-%m-%d') }}</p>
+        {% endif %}
+      </div>
       <input type="hidden" name="todo_id" value="{{ todo[0] }}">
       <button type="submit" formaction="{{ url_for('delete_todo') }}" class="delete-button">削除</button>
     </form>

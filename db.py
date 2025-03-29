@@ -44,7 +44,11 @@ def init_db():
         CREATE TABLE IF NOT EXISTS todo (
             todo_id SERIAL PRIMARY KEY,
             description VARCHAR(255) NOT NULL,
-            completed BOOLEAN NOT NULL DEFAULT FALSE
+            completed BOOLEAN NOT NULL DEFAULT FALSE,
+            created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            completed_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            deadline DATE
         );
         """)
         con.commit()
@@ -65,11 +69,14 @@ def get_todos():
         con.close()
 
 # ToDoの追加
-def add_todo(description):
+def add_todo(description, deadline=None):
     con = connect_db()
     try:
         cur = con.cursor()
-        cur.execute("INSERT INTO todo (description) VALUES (%s)", (description,))
+        cur.execute("""
+            INSERT INTO todo (description, deadline)
+            VALUES (%s, %s)
+        """, (description, deadline))
         con.commit()
     finally:
         cur.close()
@@ -80,7 +87,13 @@ def update_todo(todo_id):
     con = connect_db()
     try:
         cur = con.cursor()
-        cur.execute("UPDATE todo SET completed='TRUE' WHERE todo_id=%s", (todo_id,))
+        cur.execute("""
+            UPDATE todo
+            SET completed = TRUE,
+                completed_at = CURRENT_TIMESTAMP,
+                updated_at = CURRENT_TIMESTAMP
+            WHERE todo_id = %s
+        """, (todo_id,))
         con.commit()
     finally:
         cur.close()
@@ -91,7 +104,7 @@ def delete_todo(todo_id):
     con = connect_db()
     try:
         cur = con.cursor()
-        cur.execute("DELETE FROM todo WHERE todo_id=%s", (todo_id,))
+        cur.execute("DELETE FROM todo WHERE todo_id = %s", (todo_id,))
         con.commit()
     finally:
         cur.close()
