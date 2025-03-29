@@ -43,12 +43,19 @@ h1 {
   display: flex;
   justify-content: center;
   gap: 10px;
+  align-items: center;
 }
 
 input {
   width: 500px;
 }
 
+.deadline-input {
+  width: 150px !important;
+  height: 32px;
+  border: 1px solid #1E4062;
+  border-radius: 6px;
+}
 
 .delete-button {
   border-color: rgb(167, 25, 25);
@@ -67,6 +74,16 @@ input {
   align-items: center;
   gap: 10px;
   margin: 10px 0;
+}
+
+.todo-content {
+  flex: 1;
+}
+
+.deadline {
+  font-size: 14px;
+  color: #666;
+  margin-top: 4px;
 }
 
 p {

@@ -1,4 +1,5 @@
 from flask import Flask, request, render_template
+from datetime import datetime
 import db
 
 app = Flask(__name__)
@@ -14,7 +15,12 @@ def show_todos():
 @app.route('/create_todo', methods=['POST'])
 def create_todo():
     description = request.form['description']
-    db.add_todo(description)
+    deadline = request.form.get('deadline')
+
+    if deadline:
+        deadline = datetime.strptime(deadline, '%Y-%m-%d').date()
+
+    db.add_todo(description, deadline)
     return show_todos()
 
 # ToDoの完了
@@ -32,4 +38,4 @@ def delete_todo():
     return show_todos()
 
 if __name__ == '__main__':
-     app.run(host='127.0.0.1', port=8080, debug=True)
+    app.run(host='127.0.0.1', port=8080, debug=True)
