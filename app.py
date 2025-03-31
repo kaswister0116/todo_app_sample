@@ -30,6 +30,19 @@ def update_todo():
     db.update_todo(todo_id)
     return show_todos()
 
+# ToDoの編集保存
+@app.route('/save_todo', methods=['POST'])
+def save_todo():   
+    todo_id = request.form['todo_id']
+    new_description = request.form['new_description']
+    new_deadline = request.form.get('new_deadline')
+    
+    if new_deadline:
+        new_deadline = datetime.strptime(new_deadline, '%Y-%m-%d').date()
+        
+    db.edit_todo(todo_id, new_description, new_deadline)
+    return show_todos()
+
 # ToDoの削除
 @app.route('/delete_todo', methods=['POST'])
 def delete_todo():
