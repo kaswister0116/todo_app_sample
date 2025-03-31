@@ -99,6 +99,23 @@ def update_todo(todo_id):
         cur.close()
         con.close()
 
+# ToDoの編集
+def edit_todo(todo_id, description, deadline=None):
+    con = connect_db()
+    try:
+        cur = con.cursor()
+        cur.execute("""
+            UPDATE todo
+            SET description = %s,
+                deadline = %s,
+                updated_at = CURRENT_TIMESTAMP
+            WHERE todo_id = %s
+            """, (description, deadline, todo_id))
+        con.commit()
+    finally:
+        cur.close()
+        con.close()
+
 # ToDoの削除
 def delete_todo(todo_id):
     con = connect_db()
