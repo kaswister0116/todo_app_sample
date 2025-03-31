@@ -18,20 +18,41 @@
   </form>
 
   <!-- ToDoの表示 -->
-   <p class="list-todo">ToDoリスト</p>
+  <p class="list-todo">ToDoリスト</p>
   {% for todo in todos %}
     {% if todo[2] == 0 %}
     <form method="POST" class="list-form">
       <div class="todo-content">
-        <p>{{ todo[1] }}</p>
-        {% if todo[6] %}
-        <p class="deadline">期限: {{ todo[6].strftime('%Y-%m-%d') }}</p>
-        {% endif %}
+        <!-- 表示モード -->
+        <div class="view-mode" id="view-{{ todo[0] }}">
+          <p>{{ todo[1] }}</p>
+          {% if todo[6] %}
+          <p class="deadline">期限: {{ todo[6].strftime('%Y-%m-%d') }}</p>
+          {% endif %}
+        </div>
+
+        <!-- 編集モード -->
+        <div class="edit-mode" id="edit-{{ todo[0] }}" style="display: none;">
+          <input type="text" name="new_description" value="{{ todo[1] }}" required>
+          <input type="date" name="new_deadline" value="{% if todo[6] %}{{ todo[6].strftime('%Y-%m-%d') }}{% endif %}" class="edit-deadline">
+        </div>
       </div>
+
       <input type="hidden" name="todo_id" value="{{ todo[0] }}">
-      <div>
-        <button type="submit" formaction="{{ url_for('update_todo') }}" class="button">完了</button>
-        <button type="submit" formaction="{{ url_for('delete_todo') }}" class="delete-button">削除</button>
+
+      <div class="button-group">
+        <!-- 通常表示時のボタン-->
+        <div class="normal-buttons" id="normal-buttons-{{ todo[0] }}">
+          <button type="button" onclick="toggleEdit('{{ todo[0] }}')" class="edit-button">編集</button>
+          <button type="submit" formaction="{{ url_for('update_todo') }}" class="button">完了</button>
+          <button type="submit" formaction="{{ url_for('delete_todo') }}" class="delete-button">削除</button>
+        </div>
+
+        <!-- 編集時のボタン -->
+        <div class="edit-buttons" id="edit-buttons-{{ todo[0] }}" style="display: none;">
+          <button type="submit" formaction="{{ url_for('save_todo') }}" class="save-button">保存</button>
+          <button type="button" onclick="cancelEdit('{{ todo[0] }}')" class="cancel-button">キャンセル</button>
+        </div>
       </div>
     </form>
     {% endif %}
@@ -48,11 +69,40 @@
         <p class="deadline">期限: {{ todo[6].strftime('%Y-%m-%d') }}</p>
         {% endif %}
       </div>
-      <input type="hidden" name="todo_id" value="{{ todo[0] }}">
-      <button type="submit" formaction="{{ url_for('delete_todo') }}" class="delete-button">削除</button>
+        <input type="hidden" name="todo_id" value="{{ todo[0] }}">
+        <button type="submit" formaction="{{ url_for('delete_todo') }}" class="delete-button">削除</button>
     </form>
     {% endif %}
   {% endfor %}
+
+  <script>
+    function toggleEdit(todoId) {
+      const viewMode = document.getElementById(`view-${todoId}`);
+      const editMode = document.getElementById(`edit-${todoId}`);
+      const normalButtons = document.getElementById(`normal-buttons-${todoId}`);
+      const editButtons = document.getElementById(`edit-buttons-${todoId}`);
+
+
+      // 編集モードに切り替え
+      viewMode.style.display = 'none';
+      editMode.style.display = 'block';
+      normalButtons.style.display = 'none';
+      editButtons.style.display = 'block';
+    }
+
+    function cancelEdit(todoId) {
+      const viewMode = document.getElementById(`view-${todoId}`);
+      const editMode = document.getElementById(`edit-${todoId}`);
+      const normalButtons = document.getElementById(`normal-buttons-${todoId}`);
+      const editButtons = document.getElementById(`edit-buttons-${todoId}`);
+
+      // 表示モードに切り替え
+      viewMode.style.display = 'block';
+      editMode.style.display = 'none';
+      normalButtons.style.display = 'block';
+      editButtons.style.display = 'none';
+    }
+  </script>
 
 </body>
 </html>
