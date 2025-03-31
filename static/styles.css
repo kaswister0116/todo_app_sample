@@ -14,6 +14,16 @@ h1 {
   color: #1E4062;
 }
 
+p {
+  margin: 0;
+}
+
+input {
+  width: 480px;
+  height: 28px;
+  padding-left: 8px;
+}
+
 .button {
   border-color: #1E4062;
   border-radius: 6px;
@@ -23,19 +33,30 @@ h1 {
   cursor: pointer;
 }
 
-/* Todo画面 */
-.logout-form {
-  position: absolute;
-  top: 20px;
-  right: 20px;
+.delete-button {
+  border-color: rgb(167, 25, 25);
+  border-radius: 6px;
+  background-color: rgb(167, 25, 25);
+  color: white;
+  height: 32px;
+  cursor: pointer;
 }
 
-.logout {
-  border: none;
-  background-color: inherit;
-  cursor: pointer;
-  font-size: 16px;
-  color: #1E4062;
+.edit-button {
+  height: 32px;
+  border-radius: 6px;
+  border-color: gray;
+}
+
+.save-button {
+  height: 32px;
+  border-radius: 6px;
+  background-color: orange;
+}
+
+.cancel-button {
+  height: 32px;
+  border-radius:6px;
 }
 
 .todo-form {
@@ -46,24 +67,11 @@ h1 {
   align-items: center;
 }
 
-input {
-  width: 500px;
-}
-
 .deadline-input {
   width: 150px !important;
   height: 32px;
   border: 1px solid #1E4062;
   border-radius: 6px;
-}
-
-.delete-button {
-  border-color: rgb(167, 25, 25);
-  border-radius: 6px;
-  background-color: rgb(167, 25, 25);
-  color: white;
-  height: 32px;
-  cursor: pointer;
 }
 
 .list-form {
@@ -86,10 +94,6 @@ input {
   margin-top: 4px;
 }
 
-p {
-  margin: 0;
-}
-
 .list-todo {
   margin-top: 50px;
   font-size: 24px;
@@ -104,7 +108,6 @@ p {
   color: #1E4062;
 }
 
-/* ユーザー登録＆ログイン画面 */
 .form {
   width: 300px;
   display: flex;
@@ -117,11 +120,31 @@ p {
   height: 32px;
 }
 
-a {
-  text-decoration: none;
-  color: #1E4062;
-}
-
 .error {
   color: rgb(201, 2, 2);
+}
+
+// 編集モードのスタイル //
+.edit-mode input[type="text"] {
+  width: 200px;
+  padding: 8px;
+}
+
+.edit-mode input[type="dete"] {
+  padding: 8px;
+}
+
+// ボタングループのスタイル
+.button-group {
+  display: flex;
+  gap: 5px;
+}
+
+.normal-buttons, .edit-buttons {
+  display: flex;
+  gap: 5px;
+}
+
+.edit-deadline {
+  width: 100px;
 }
