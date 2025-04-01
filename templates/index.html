@@ -41,7 +41,14 @@
             <p class="todo-description">{{ todo[1] }}</p>
             <div class="todo-meta">
               {% if todo[6] %}
-              <p class="deadline">期限: {{ todo[6].strftime('%Y-%m-%d') }}</p>
+                {% set days_left = (todo[6] - current_date).days %}
+                {% if days_left < 0 %}
+                <p class="deadline deadline-passed">期限: {{ todo[6].strftime('%Y-%m-%d') }} (期限切れ)</p>
+                {% elif days_left <= 3 %}
+                  <p class="deadline deadline-near">期限: {{ todo[6].strftime('%Y-%m-%d') }} (あと{{ days_left }}日)</p>
+                {% else %}
+                  <p class="deadline">期限: {{ todo[6].strftime('%Y-%m-%d') }}</p>
+                {% endif %}
               {% endif %}
               <p class="priority priority-{{ todo[7] }}">優先度: {{ ["高", "中", "低"][todo[7]-1] }}</p>
               <div class="progress-bar-container">

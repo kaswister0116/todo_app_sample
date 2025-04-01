@@ -192,4 +192,12 @@ input {
   width: 60px;
 }
 
+.deadline-near {
+  color: orange;
+  font-weight: bold;
+}
 
+.deadline-passed {
+  color: red;
+  font-weight: bold;
+}

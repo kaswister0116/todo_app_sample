@@ -9,7 +9,8 @@ db.init_db()
 @app.route('/')
 def show_todos():
     todos = db.get_todos()
-    return render_template('index.html', todos=todos)
+    current_date = datetime.now().date()
+    return render_template('index.html', todos=todos, current_date=current_date)
 
 # 新規ToDoの作成
 @app.route('/create_todo', methods=['POST'])
@@ -22,12 +23,12 @@ def create_todo():
 
     if deadline:
         deadline = datetime.strptime(deadline, '%Y-%m-%d').date()
-        
+
     try:
         priority = int(priority)
     except (ValueError, TypeError):
         priority = 3
-        
+
     try:
         progress = int(progress)
         if progress < 0:
@@ -49,7 +50,7 @@ def update_todo():
 
 # ToDoの編集保存
 @app.route('/save_todo', methods=['POST'])
-def save_todo():  
+def save_todo():
     # フォームデータの取得
     todo_id = request.form['todo_id']
     new_description = request.form['new_description']
@@ -57,15 +58,15 @@ def save_todo():
     new_priority = request.form.get('new_priority')
     new_notes = request.form.get('new_notes')
     new_progress = request.form.get('new_progress')
-    
+
     if new_deadline:
         new_deadline = datetime.strptime(new_deadline, '%Y-%m-%d').date()
-        
+
     try:
         new_priority = int(new_priority) if new_priority else None
     except (ValueError, TypeError):
         new_priority = None
-        
+
     try:
         new_progress = int(new_progress) if new_progress else None
         if new_progress is not None:
@@ -75,7 +76,7 @@ def save_todo():
                 new_progress = 100
     except (ValueError, TypeError):
         new_progress = None
-        
+
     db.edit_todo(todo_id, new_description, new_deadline, new_priority, new_notes, new_progress)
     return show_todos()
 
