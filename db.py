@@ -48,7 +48,10 @@ def init_db():
             created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
             updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
             completed_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-            deadline DATE
+            deadline DATE,
+            priority INTEGER DEFAULT 3,
+            notes TEXT,
+            progress INTEGER DEFAULT 0 CHECK (progress >= 0 AND progress <= 100)
         );
         """)
         con.commit()
@@ -69,20 +72,20 @@ def get_todos():
         con.close()
 
 # ToDoの追加
-def add_todo(description, deadline=None):
+def add_todo(description, deadline=None, priority=2, notes=None, progress=0):
     con = connect_db()
     try:
         cur = con.cursor()
         cur.execute("""
-            INSERT INTO todo (description, deadline)
-            VALUES (%s, %s)
-        """, (description, deadline))
+            INSERT INTO todo (description, deadline, priority, notes, progress)
+            VALUES (%s, %s, %s, %s, %s)
+        """, (description, deadline, priority, notes, progress))
         con.commit()
     finally:
         cur.close()
         con.close()
 
-# ToDoの更新
+# ToDoの更新（完了）
 def update_todo(todo_id):
     con = connect_db()
     try:
@@ -91,7 +94,8 @@ def update_todo(todo_id):
             UPDATE todo
             SET completed = TRUE,
                 completed_at = CURRENT_TIMESTAMP,
-                updated_at = CURRENT_TIMESTAMP
+                updated_at = CURRENT_TIMESTAMP,
+                progress = 100
             WHERE todo_id = %s
         """, (todo_id,))
         con.commit()
@@ -100,17 +104,38 @@ def update_todo(todo_id):
         con.close()
 
 # ToDoの編集
-def edit_todo(todo_id, description, deadline=None):
+def edit_todo(todo_id, description, deadline=None, priority=None, notes=None, progress=None):
     con = connect_db()
     try:
         cur = con.cursor()
+        
+        # 現在の値を取得
+        cur.execute("""
+            SELECT priority, notes, progress
+            FROM todo
+            WHERE todo_id = %s
+        """, (todo_id))
+        current_values = cur.fetchone()
+        
+        # 入力がない場合は現在の値を使用する
+        if priority is None and current_values:
+            priority = current_values[0]
+        if notes is None and current_values:
+            notes = current_values[1]
+        if progress is None and current_values:
+            progress = current_values[2]
+        
+        # 更新クエリ実行
         cur.execute("""
             UPDATE todo
             SET description = %s,
                 deadline = %s,
+                priority = %s,
+                notes = %s,
+                progress = %s,
                 updated_at = CURRENT_TIMESTAMP
             WHERE todo_id = %s
-            """, (description, deadline, todo_id))
+            """, (description, deadline, priority, notes, progress, todo_id))
         con.commit()
     finally:
         cur.close()

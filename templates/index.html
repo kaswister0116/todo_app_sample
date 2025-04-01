@@ -12,8 +12,20 @@
 
   <!-- 新しいToDoの登録 -->
   <form action="{{ url_for('create_todo') }}" method="POST" class="todo-form">
-    <input type="text" name="description" placeholder="新しいToDoを入力" required>
-    <input type="date" name="deadline" class="deadline-input">
+    <div class='form-group'>
+      <input type="text" name="description" placeholder="新しいToDoを入力" required>
+      <input type="date" name="deadline" class="deadline-input">
+    </div>
+    <div class='form-group'>
+      <select name="priority" class="priority-select">
+        <option value="1">優先度: 高</option>
+        <option value="2" selected>優先度: 中</option>
+        <option value="3">優先度: 低</option>
+      </select>
+    </div>
+    <div class='form-group'>
+      <textarea name='notes' placeholder="備考（任意）" class="notes-input"></textarea>
+    </div>
     <button type="submit" class="button">登録</button>
   </form>
 
@@ -25,16 +37,37 @@
       <div class="todo-content">
         <!-- 表示モード -->
         <div class="view-mode" id="view-{{ todo[0] }}">
-          <p>{{ todo[1] }}</p>
-          {% if todo[6] %}
-          <p class="deadline">期限: {{ todo[6].strftime('%Y-%m-%d') }}</p>
-          {% endif %}
+          <div class="todo-header">
+            <p class="todo-description">{{ todo[1] }}</p>
+            <div class="todo-meta">
+              {% if todo[6] %}
+              <p class="deadline">期限: {{ todo[6].strftime('%Y-%m-%d') }}</p>
+              {% endif %}
+              <p class="priority priority-{{ todo[7] }}">優先度: {{ ["高", "中", "低"][todo[7]-1] }}</p>
+              <div class="progress-bar-container">
+                <div class="progress-bar" style="width: {{ todo[9] }}"></div>
+                <span class="progress-text">進捗: {{ todo[9] }}%</span>
+              </div>
+            </div>
+          </div>
+          <p class="notes">備考: {{ todo[8] }}</p>
         </div>
 
         <!-- 編集モード -->
         <div class="edit-mode" id="edit-{{ todo[0] }}" style="display: none;">
-          <input type="text" name="new_description" value="{{ todo[1] }}" required>
-          <input type="date" name="new_deadline" value="{% if todo[6] %}{{ todo[6].strftime('%Y-%m-%d') }}{% endif %}" class="edit-deadline">
+          <div class="edit-form-group">
+            <input type="text" name="new_description" value="{{ todo[1] }}" required>
+          </div>
+          <div class="edit-form-group">
+            <input type="date" name="new_deadline" value="{% if todo[6] %}{{ todo[6].strftime('%Y-%m-%d') }}{% endif %}" class="edit-deadline">
+            <select name="priority" class="priority-select">
+              <option value="1">優先度: 高</option>
+              <option value="2" selected>優先度: 中</option>
+              <option value="3">優先度: 低</option>
+            </select>
+            <input type="number" name="new_progress" placeholder="進捗（%）" min="0" max="100" value="{{ todo[9] }}" class="progress-input">
+          </div>
+          <textarea name="new_notes" placeholder="備考（任意）" class="notes-input">{{ todo[8] }}</textarea>
         </div>
       </div>
 
