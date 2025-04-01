@@ -2,12 +2,15 @@ CREATE DATABASE todo_app;
 
 \connect todo_app
 
-CREATE TABLE todo (
+CREATE TABLE IF NOT EXISTS todo (
     todo_id SERIAL PRIMARY KEY,
     description VARCHAR(255) NOT NULL,
     completed BOOLEAN NOT NULL DEFAULT FALSE,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     completed_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    deadline DATE
+    deadline DATE,
+    priority INTEGER NOT NULL DEFAULT 2,
+    notes TEXT,
+    progress INTEGER DEFAULT 0
 );
