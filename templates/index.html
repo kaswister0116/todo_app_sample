@@ -14,7 +14,7 @@
   <form action="{{ url_for('create_todo') }}" method="POST" class="todo-form">
     <div class='form-group'>
       <input type="text" name="description" placeholder="新しいToDoを入力" required>
-      <input type="date" name="deadline" class="deadline-input">
+      <input type="date" name="deadline" class="deadline-input" required>
     </div>
     <div class='form-group'>
       <select name="priority" class="priority-select">
@@ -33,12 +33,12 @@
   <p class="list-todo">ToDoリスト</p>
   {% for todo in todos %}
     {% if todo[2] == 0 %}
-    <form method="POST" class="list-form">
+    <form method="POST" class="list-form" id="form-{{ todo[0] }}">
       <div class="todo-content">
         <!-- 表示モード -->
         <div class="view-mode" id="view-{{ todo[0] }}">
           <div class="todo-header">
-            <p class="todo-description">{{ todo[1] }}</p>
+            <h3 class="todo-description">{{ todo[1] }}</h3>
             <div class="todo-meta">
               {% if todo[6] %}
                 {% set days_left = (todo[6] - current_date).days %}
@@ -84,13 +84,13 @@
         <!-- 通常表示時のボタン-->
         <div class="normal-buttons" id="normal-buttons-{{ todo[0] }}">
           <button type="button" onclick="toggleEdit('{{ todo[0] }}')" class="edit-button">編集</button>
-          <button type="submit" formaction="{{ url_for('update_todo') }}" class="button">完了</button>
-          <button type="submit" formaction="{{ url_for('delete_todo') }}" class="delete-button">削除</button>
+          <button type="button" onclick="completeTodo('{{ todo[0] }}')" class="button">完了</button>
+          <button type="button" onclick="deleteTodo('{{ todo[0] }}')" class="delete-button">削除</button>
         </div>
 
         <!-- 編集時のボタン -->
         <div class="edit-buttons" id="edit-buttons-{{ todo[0] }}" style="display: none;">
-          <button type="submit" formaction="{{ url_for('save_todo') }}" class="save-button">保存</button>
+          <button type="button" onclick="saveTodo('{{ todo[0] }}')" class="save-button">保存</button>
           <button type="button" onclick="cancelEdit('{{ todo[0] }}')" class="cancel-button">キャンセル</button>
         </div>
       </div>
@@ -102,7 +102,7 @@
   <p class="done-todo">完了したToDo</p>
   {% for todo in todos %}
     {% if todo[2] == 1 %}
-    <form method="POST" class="list-form">
+    <form method="POST" class="list-form" id="form-{{ todo[0] }}">
       <div class="todo-content">
         <p>{{ todo[1] }}</p>
         {% if todo[6] %}
@@ -110,12 +110,32 @@
         {% endif %}
       </div>
         <input type="hidden" name="todo_id" value="{{ todo[0] }}">
-        <button type="submit" formaction="{{ url_for('delete_todo') }}" class="delete-button">削除</button>
+        <button type="button" onclick="deleteTodo('{{ todo[0] }}')" class="delete-button">削除</button>
     </form>
     {% endif %}
   {% endfor %}
 
   <script>
+    function completeTodo(todoId) {
+      const form = document.getElementById(`form-${todoId}`);
+      form.action = "{{ url_for('update_todo')}}";
+      form.submit()
+    }
+
+    function deleteTodo(todoId) {
+      if (confirm('本当に削除しますか？')) {
+        const form = document.getElementById(`form-${todoId}`)
+        form.action = "{{ url_for('delete_todo')}}"
+        form.submit()
+      }
+    }
+
+    function saveTodo(todoId) {
+      const form = document.getElementById(`form-${todoId}`)
+      form.action = "{{ url_for('save_todo')}}"
+      form.submit()
+    }
+
     function toggleEdit(todoId) {
       const viewMode = document.getElementById(`view-${todoId}`);
       const editMode = document.getElementById(`edit-${todoId}`);
