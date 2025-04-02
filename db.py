@@ -48,10 +48,7 @@ def init_db():
             created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
             updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
             completed_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-            deadline DATE,
-            priority INTEGER DEFAULT 3,
-            notes TEXT,
-            progress INTEGER DEFAULT 0 CHECK (progress >= 0 AND progress <= 100)
+            deadline DATE
         );
         """)
         con.commit()
@@ -59,12 +56,32 @@ def init_db():
     finally:
         con.close()
 
-# すべてのToDoの読み込み
+# すべてのToDoの読み込み（期限日でソート）
 def get_todos():
     con = connect_db()
     try:
         cur = con.cursor()
-        cur.execute("SELECT * FROM todo;")
+        # 未完了のToDoは期限日の昇順（NULLは最後）
+        # 完了済みのToDoは完了日時の降順
+        cur.execute("""
+            (
+                SELECT * FROM todo
+                WHERE completed = FALSE
+                ORDER BY
+                    CASE
+                        WHEN deadline IS NULL THEN 1
+                        ELSE 0
+                    END,
+                    deadline ASC,
+                    created_at ASC
+            )
+            UNION ALL
+            (
+                SELECT * FROM todo
+                WHERE completed = TRUE
+                ORDER BY completed_at DESC
+            );
+        """)
         todos = cur.fetchall()
         return todos
     finally:
@@ -72,20 +89,20 @@ def get_todos():
         con.close()
 
 # ToDoの追加
-def add_todo(description, deadline=None, priority=2, notes=None, progress=0):
+def add_todo(description, deadline=None, priority=2, notes=''):
     con = connect_db()
     try:
         cur = con.cursor()
         cur.execute("""
-            INSERT INTO todo (description, deadline, priority, notes, progress)
-            VALUES (%s, %s, %s, %s, %s)
-        """, (description, deadline, priority, notes, progress))
+            INSERT INTO todo (description, deadline, priority, notes)
+            VALUES (%s, %s, %s, %s)
+        """, (description, deadline, priority, notes))
         con.commit()
     finally:
         cur.close()
         con.close()
 
-# ToDoの更新（完了）
+# ToDoの更新
 def update_todo(todo_id):
     con = connect_db()
     try:
@@ -94,8 +111,7 @@ def update_todo(todo_id):
             UPDATE todo
             SET completed = TRUE,
                 completed_at = CURRENT_TIMESTAMP,
-                updated_at = CURRENT_TIMESTAMP,
-                progress = 100
+                updated_at = CURRENT_TIMESTAMP
             WHERE todo_id = %s
         """, (todo_id,))
         con.commit()
@@ -108,7 +124,7 @@ def edit_todo(todo_id, description, deadline=None, priority=None, notes=None, pr
     con = connect_db()
     try:
         cur = con.cursor()
-        
+
         # 現在の値を取得
         cur.execute("""
             SELECT priority, notes, progress
@@ -116,7 +132,7 @@ def edit_todo(todo_id, description, deadline=None, priority=None, notes=None, pr
             WHERE todo_id = %s
         """, (todo_id))
         current_values = cur.fetchone()
-        
+
         # 入力がない場合は現在の値を使用する
         if priority is None and current_values:
             priority = current_values[0]
@@ -124,7 +140,7 @@ def edit_todo(todo_id, description, deadline=None, priority=None, notes=None, pr
             notes = current_values[1]
         if progress is None and current_values:
             progress = current_values[2]
-        
+
         # 更新クエリ実行
         cur.execute("""
             UPDATE todo
@@ -147,6 +163,26 @@ def delete_todo(todo_id):
     try:
         cur = con.cursor()
         cur.execute("DELETE FROM todo WHERE todo_id = %s", (todo_id,))
+        con.commit()
+    finally:
+        cur.close()
+        con.close()
+
+# ToDoの編集内容を保存
+def save_todo(todo_id, description, deadline, priority, progress, notes):
+    con = connect_db()
+    try:
+        cur = con.cursor()
+        cur.execute("""
+            UPDATE todo
+            SET description = %s,
+                deadline = %s,
+                priority = %s,
+                progress = %s,
+                notes = %s,
+                updated_at = CURRENT_TIMESTAMP
+            WHERE todo_id = %s
+        """, (description, deadline, priority, progress, notes, todo_id))
         con.commit()
     finally:
         cur.close()
