@@ -12,21 +12,19 @@
 
   <!-- 新しいToDoの登録 -->
   <form action="{{ url_for('create_todo') }}" method="POST" class="todo-form">
-    <div class='form-group'>
+    <div class="form-row">
       <input type="text" name="description" placeholder="新しいToDoを入力" required>
-      <input type="date" name="deadline" class="deadline-input" required>
     </div>
-    <div class='form-group'>
+    <div class="form-row">
+      <input type="date" name="deadline" class="deadline-input">
       <select name="priority" class="priority-select">
-        <option value="1">優先度: 高</option>
-        <option value="2" selected>優先度: 中</option>
-        <option value="3">優先度: 低</option>
+        <option value="中">優先度: 中</option>
+        <option value="高">優先度: 高</option>
+        <option value="低">優先度: 低</option>
       </select>
+      <input type="text" name="notes" placeholder="備考（任意）" class="notes-input">
+      <button type="submit" class="button">登録</button>
     </div>
-    <div class='form-group'>
-      <textarea name='notes' placeholder="備考（任意）" class="notes-input"></textarea>
-    </div>
-    <button type="submit" class="button">登録</button>
   </form>
 
   <!-- ToDoの表示 -->
