@@ -8,12 +8,15 @@
 </head>
 
 <body>
-  <h1>ToDoアプリ</h1>
+  <header class="header">
+    <h1>ToDoアプリ</h1>
+  </header>
+  <div class="body-container">
 
   <!-- 新しいToDoの登録 -->
   <form action="{{ url_for('create_todo') }}" method="POST" class="todo-form">
     <div class="form-row">
-      <input type="text" name="description" placeholder="新しいToDoを入力" required>
+      <input type="text" name="description" placeholder="新しいToDoを入力" class="todo-input" required>
     </div>
     <div class="form-row">
       <input type="date" name="deadline" class="deadline-input">
@@ -23,7 +26,7 @@
         <option value="低">優先度: 低</option>
       </select>
       <input type="text" name="notes" placeholder="備考（任意）" class="notes-input">
-      <button type="submit" class="button">登録</button>
+      <button type="submit" class="register-button">登録</button>
     </div>
   </form>
 
@@ -36,7 +39,7 @@
         <!-- 表示モード -->
         <div class="view-mode" id="view-{{ todo[0] }}">
           <div class="todo-header">
-            <h3 class="todo-description">{{ todo[1] }}</h3>
+            <p class="todo-description">{{ todo[1] }}</p>
             <div class="todo-meta">
               {% if todo[6] %}
                 {% set days_left = (todo[6] - current_date).days %}
@@ -112,6 +115,7 @@
     </form>
     {% endif %}
   {% endfor %}
+  </div>
 
   <script>
     function completeTodo(todoId) {
