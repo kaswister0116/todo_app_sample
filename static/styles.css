@@ -154,6 +154,12 @@ input {
   margin-top: 4px;
 }
 
+.created-at {
+  font-size: 14px;
+  color: #666;
+  margin-top: 4px;
+}
+
 .list-todo {
   margin-top: 50px;
   font-size: 24px;
@@ -221,7 +227,7 @@ input {
 .normal-buttons, .edit-buttons {
   display: flex;
   gap: 5px;
-  
+
 }
 
 .edit-deadline {
@@ -244,4 +250,44 @@ input {
 
 .todo-description {
   font-size: 24px;
+}
+
+.calendar-icon {
+  cursor: pointer;
+  margin-right: 5px;
+  font-size: 1.2em;
+  transition: transform 0.2s;
+}
+
+.calendar-icon:hover {
+  transform: scale(1.1);
+}
+
+.deadline-container {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  min-width: 120px;
+  height: 40px;
+  border: 1px solid #1E4062;
+  border-radius: 6px;
+  padding: 0 10px;
+  box-shadow: 1px 1px 5px gray;
+  background-color: white;
+  cursor: pointer;
+}
+
+#deadline-display {
+  color: #666;
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+.revert-button {
+  border-color: #4689FF;
+  border-radius: 6px;
+  background-color: #4689FF;
+  color: white;
+  height: 32px;
+  cursor: pointer;
 }

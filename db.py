@@ -48,7 +48,10 @@ def init_db():
             created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
             updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
             completed_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-            deadline DATE
+            deadline DATE,
+            priority INTEGER DEFAULT 3,
+            notes TEXT,
+            progress INTEGER DEFAULT 0 CHECK (progress >= 0 AND progress <= 100)
         );
         """)
         con.commit()
@@ -183,6 +186,23 @@ def save_todo(todo_id, description, deadline, priority, progress, notes):
                 updated_at = CURRENT_TIMESTAMP
             WHERE todo_id = %s
         """, (description, deadline, priority, progress, notes, todo_id))
+        con.commit()
+    finally:
+        cur.close()
+        con.close()
+
+# ToDoを未完了に戻す
+def revert_todo(todo_id):
+    con = connect_db()
+    try:
+        cur = con.cursor()
+        cur.execute("""
+            UPDATE todo
+            SET completed = FALSE,
+                completed_at = CURRENT_TIMESTAMP,
+                updated_at = CURRENT_TIMESTAMP
+            WHERE todo_id = %s
+        """, (todo_id,))
         con.commit()
     finally:
         cur.close()
