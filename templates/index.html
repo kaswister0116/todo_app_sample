@@ -19,13 +19,17 @@
       <input type="text" name="description" placeholder="新しいToDoを入力" class="todo-input" required>
     </div>
     <div class="form-row">
-      <input type="date" name="deadline" class="deadline-input">
+      <div class="deadline-container">
+        <span class="calendar-icon" onclick="showNewDatePicker()">📅</span>
+        <input type="date" name="deadline" class="deadline-input" id="new-deadline" style="display: none;">
+        <span id="deadline-display">期限を設定</span>
+      </div>
       <select name="priority" class="priority-select">
         <option value="中">優先度: 中</option>
         <option value="高">優先度: 高</option>
         <option value="低">優先度: 低</option>
       </select>
-      <input type="text" name="notes" placeholder="備考（任意）" class="notes-input">
+      <input type="text" name="notes" placeholder="メモ（任意）" class="notes-input">
       <button type="submit" class="register-button">登録</button>
     </div>
   </form>
@@ -41,15 +45,30 @@
           <div class="todo-header">
             <p class="todo-description">{{ todo[1] }}</p>
             <div class="todo-meta">
+              <p class="created-at">作成日時: {{ todo[3].strftime('%Y-%m-%d %H:%M') }}</p>
               {% if todo[6] %}
                 {% set days_left = (todo[6] - current_date).days %}
                 {% if days_left < 0 %}
-                <p class="deadline deadline-passed">期限: {{ todo[6].strftime('%Y-%m-%d') }} (期限切れ)</p>
+                <p class="deadline deadline-passed">
+                  <span class="calendar-icon" onclick="showDatePicker('{{ todo[0] }}')">📅</span>
+                  期限: {{ todo[6].strftime('%Y-%m-%d') }} (期限切れ)
+                </p>
                 {% elif days_left <= 3 %}
-                  <p class="deadline deadline-near">期限: {{ todo[6].strftime('%Y-%m-%d') }} (あと{{ days_left }}日)</p>
+                  <p class="deadline deadline-near">
+                    <span class="calendar-icon" onclick="showDatePicker('{{ todo[0] }}')">📅</span>
+                    期限: {{ todo[6].strftime('%Y-%m-%d') }} (あと{{ days_left }}日)
+                  </p>
                 {% else %}
-                  <p class="deadline">期限: {{ todo[6].strftime('%Y-%m-%d') }}</p>
+                  <p class="deadline">
+                    <span class="calendar-icon" onclick="showDatePicker('{{ todo[0] }}')">📅</span>
+                    期限: {{ todo[6].strftime('%Y-%m-%d') }}
+                  </p>
                 {% endif %}
+              {% else %}
+                <p class="deadline">
+                  <span class="calendar-icon" onclick="showDatePicker('{{ todo[0] }}')">📅</span>
+                  期限: 未設定
+                </p>
               {% endif %}
               <p class="priority priority-{{ todo[7] }}">優先度: {{ ["高", "中", "低"][todo[7]-1] }}</p>
               <div class="progress-bar-container">
@@ -58,7 +77,7 @@
               </div>
             </div>
           </div>
-          <p class="notes">備考: {{ todo[8] }}</p>
+          <p class="notes">メモ: {{ todo[8] }}</p>
         </div>
 
         <!-- 編集モード -->
@@ -69,13 +88,14 @@
           <div class="edit-form-group">
             <input type="date" name="new_deadline" value="{% if todo[6] %}{{ todo[6].strftime('%Y-%m-%d') }}{% endif %}" class="edit-deadline">
             <select name="priority" class="priority-select">
-              <option value="1">優先度: 高</option>
-              <option value="2" selected>優先度: 中</option>
-              <option value="3">優先度: 低</option>
+              {% set priority_labels = {1: '高', 2: '中', 3: '低'} %}
+              {% for value, label in priority_labels.items() %}
+                <option value="{{ label }}" {% if todo[7] == value %}selected{% endif %}>{{ label }}</option>
+              {% endfor %}
             </select>
             <input type="number" name="new_progress" placeholder="進捗（%）" min="0" max="100" value="{{ todo[9] }}" class="progress-input">
           </div>
-          <textarea name="new_notes" placeholder="備考（任意）" class="notes-input">{{ todo[8] }}</textarea>
+          <textarea name="new_notes" placeholder="メモ（任意）" class="notes-input">{{ todo[8] }}</textarea>
         </div>
       </div>
 
@@ -105,19 +125,31 @@
     {% if todo[2] == 1 %}
     <form method="POST" class="list-form" id="form-{{ todo[0] }}">
       <div class="todo-content">
-        <p>{{ todo[1] }}</p>
-        {% if todo[6] %}
-        <p class="deadline">完了日: {{ todo[5].strftime('%Y-%m-%d') }}</p>
-        {% endif %}
+        <p class="todo-description">{{ todo[1] }}</p>
+        <div class="todo-meta">
+          <p class="created-at">作成日時: {{ todo[3].strftime('%Y-%m-%d %H:%M') }}</p>
+          {% if todo[6] %}
+          <p class="deadline">完了日時: {{ todo[5].strftime('%Y-%m-%d %H:%M') }}</p>
+          {% endif %}
+        </div>
       </div>
-        <input type="hidden" name="todo_id" value="{{ todo[0] }}">
+      <input type="hidden" name="todo_id" value="{{ todo[0] }}">
+      <div class="button-group">
+        <button type="button" onclick="revertTodo('{{ todo[0] }}')" class="revert-button">戻す</button>
         <button type="button" onclick="deleteTodo('{{ todo[0] }}')" class="delete-button">削除</button>
+      </div>
     </form>
     {% endif %}
   {% endfor %}
   </div>
 
   <script>
+    function revertTodo(todoId) {
+      const form = document.getElementById(`form-${todoId}`);
+      form.action = "{{ url_for('revert_todo')}}";
+      form.submit();
+    }
+
     function completeTodo(todoId) {
       const form = document.getElementById(`form-${todoId}`);
       form.action = "{{ url_for('update_todo')}}";
@@ -163,6 +195,56 @@
       editMode.style.display = 'none';
       normalButtons.style.display = 'block';
       editButtons.style.display = 'none';
+    }
+
+    function showDatePicker(todoId) {
+      const form = document.getElementById(`form-${todoId}`);
+      const viewMode = document.getElementById(`view-${todoId}`);
+      const editMode = document.getElementById(`edit-${todoId}`);
+      const normalButtons = document.getElementById(`normal-buttons-${todoId}`);
+      const editButtons = document.getElementById(`edit-buttons-${todoId}`);
+
+      // 編集モードに切り替え
+      viewMode.style.display = 'none';
+      editMode.style.display = 'block';
+      normalButtons.style.display = 'none';
+      editButtons.style.display = 'block';
+
+      // 日付入力フィールドにフォーカスを当てる
+      const dateInput = editMode.querySelector('input[type="date"]');
+      dateInput.focus();
+    }
+
+    function showNewDatePicker() {
+      const dateInput = document.getElementById('new-deadline');
+      const displaySpan = document.getElementById('deadline-display');
+      const container = dateInput.parentElement;
+
+      dateInput.style.display = 'inline';
+      dateInput.focus();
+
+      dateInput.addEventListener('change', function() {
+        if (this.value) {
+          const date = new Date(this.value);
+          const formatted = date.toLocaleDateString('ja-JP', { year: 'numeric', month: '2-digit', day: '2-digit' });
+          displaySpan.textContent = formatted;
+        } else {
+          displaySpan.textContent = '期限を設定';
+        }
+        this.style.display = 'none';
+      });
+
+      dateInput.addEventListener('blur', function() {
+        if (!this.value) {
+          this.style.display = 'none';
+        }
+      });
+
+      // コンテナ全体をクリックしても日付選択を表示
+      container.addEventListener('click', function() {
+        dateInput.style.display = 'inline';
+        dateInput.focus();
+      });
     }
   </script>
 
