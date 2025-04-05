@@ -74,7 +74,7 @@
               {% endif %}
               <p class="priority priority-{{ todo[7] }}">優先度: {{ ["高", "中", "低"][todo[7]-1] }}</p>
               <div class="progress-bar-container">
-                <div class="progress-bar" style="width: {{ todo[9] }}"></div>
+                <div class="progress-bar" style="--progress: {{ todo[9] }}%"></div>
                 <span class="progress-text">進捗: {{ todo[9] }}%</span>
               </div>
             </div>
