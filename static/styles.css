@@ -148,12 +148,6 @@ input {
   flex: 1;
 }
 
-.deadline {
-  font-size: 14px;
-  color: #666;
-  margin-top: 4px;
-}
-
 .created-at {
   font-size: 14px;
   color: #666;
@@ -184,10 +178,48 @@ input {
 
 .todo-meta {
   display: flex;
-  flex-wrap: wrap;
+  align-items: center;
+  flex-wrap: nowrap;
   gap: 30px;
   margin-bottom: 5px;
   font-size: 0.85em;
+}
+
+.deadline {
+  font-size: 14px;
+  color: #666;
+  margin-top: 4px;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+}
+
+.deadline-near {
+  color: orange;
+  font-weight: bold;
+}
+
+.deadline-passed {
+  color: red;
+  font-weight: bold;
+}
+
+.progress-bar-container {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  min-width: 150px;
+}
+
+.progress-bar {
+  height: 8px;
+  background-color: #4CAF50;
+  border-radius: 4px;
+}
+
+.progress-text {
+  white-space: nowrap;
+  color: #666;
 }
 
 /* 編集モードのスタイル */
@@ -238,16 +270,6 @@ input {
   width: 60px;
 }
 
-.deadline-near {
-  color: orange;
-  font-weight: bold;
-}
-
-.deadline-passed {
-  color: red;
-  font-weight: bold;
-}
-
 .todo-description {
   font-size: 24px;
 }
@@ -290,4 +312,9 @@ input {
   color: white;
   height: 32px;
   cursor: pointer;
+}
+
+.deadline-note {
+  margin-left: 5px;
+  font-size: 0.9em;
 }

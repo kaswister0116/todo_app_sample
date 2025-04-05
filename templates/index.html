@@ -51,12 +51,14 @@
                 {% if days_left < 0 %}
                 <p class="deadline deadline-passed">
                   <span class="calendar-icon" onclick="showDatePicker('{{ todo[0] }}')">📅</span>
-                  期限: {{ todo[6].strftime('%Y-%m-%d') }} (期限切れ)
+                  期限: {{ todo[6].strftime('%Y-%m-%d') }}
+                  <span class="deadline-note">(期限切れ)</span>
                 </p>
                 {% elif days_left <= 3 %}
                   <p class="deadline deadline-near">
                     <span class="calendar-icon" onclick="showDatePicker('{{ todo[0] }}')">📅</span>
-                    期限: {{ todo[6].strftime('%Y-%m-%d') }} (あと{{ days_left }}日)
+                    期限: {{ todo[6].strftime('%Y-%m-%d') }}
+                    <span class="deadline-note">(あと{{ days_left }}日)</span>
                   </p>
                 {% else %}
                   <p class="deadline">
