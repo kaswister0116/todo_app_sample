@@ -3,17 +3,18 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  /* max-width: 1000px; */
-  margin: auto;
-  position: relative;
-  gap: 20px;
+  margin: 0;
+  background-color: #f5f6fa;
+  font-family: 'Helvetica Neue', Arial, sans-serif;
 }
 
 h1 {
-  font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+  font-family: 'Helvetica Neue', Arial, sans-serif;
   color: #ffffff;
   text-align: center;
-  text-shadow: 1px 1px 2px pink;
+  font-weight: 500;
+  font-size: 28px;
+  margin: 15px 0;
 }
 
 p {
@@ -30,20 +31,23 @@ input {
 
 .header {
   width: 100%;
-  background-color: #0099FF;
-  margin-bottom: 40px;
-  box-shadow: 1px 1px 5px gray;
+  background-color: #4834d4;
+  margin-bottom: 30px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .body-container {
-  max-width: 780px;
+  max-width: 800px;
+  width: 95%;
+  padding: 20px;
 }
 
 .todo-form {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 30px;
 }
 
 .form-row {
@@ -88,49 +92,99 @@ input {
   box-shadow: 1px 1px 5px gray;
 }
 
-.delete-button {
-  border-color: rgb(167, 25, 25);
-  border-radius: 6px;
-  background-color: rgb(167, 25, 25);
-  color: white;
-  height: 32px;
-  cursor: pointer;
+.list-form {
+  background: white;
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin: 15px 0;
+  transition: transform 0.2s;
 }
 
-.list-form {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 10px;
-  margin: 10px 0;
-  border-radius: 6px;
-  box-shadow: 1px 1px 8px gray;
-  padding: 4px 8px 4px 10px;
+.list-form:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.todo-description {
+  font-size: 18px;
+  color: #2d3436;
+  margin-bottom: 8px;
 }
 
 .button {
-  border-color: #1E4062;
+  border: none;
   border-radius: 6px;
-  background-color: #1E4062;
+  background-color: #4834d4;
   color: white;
-  height: 32px;
+  height: 36px;
+  padding: 0 15px;
   cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.button:hover {
+  background-color: #3c2bb7;
 }
 
 .register-button {
-  border-color: #4689FF;
+  border: none;
   border-radius: 6px;
-  background-color: #4689FF;
+  background-color: #4834d4;
   color: white;
   height: 40px;
+  padding: 0 20px;
   cursor: pointer;
-  box-shadow: 1px 1px 1px gray;
+  transition: background-color 0.2s;
+}
+
+.register-button:hover {
+  background-color: #3c2bb7;
+}
+
+.delete-button {
+  border: none;
+  border-radius: 6px;
+  background-color: #e84393;
+  color: white;
+  height: 36px;
+  padding: 0 15px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.delete-button:hover {
+  background-color: #d63384;
+}
+
+.revert-button {
+  border: none;
+  border-radius: 6px;
+  background-color: #00b894;
+  color: white;
+  height: 36px;
+  padding: 0 15px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.revert-button:hover {
+  background-color: #00a885;
 }
 
 .edit-button {
-  height: 32px;
+  border: 1px solid #b2bec3;
   border-radius: 6px;
-  border-color: gray;
+  background-color: white;
+  color: #2d3436;
+  height: 36px;
+  padding: 0 15px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.edit-button:hover {
+  background-color: #f5f6fa;
 }
 
 .save-button {
@@ -154,19 +208,11 @@ input {
   margin-top: 4px;
 }
 
-.list-todo {
-  margin-top: 50px;
-  font-size: 24px;
-  font-weight: bold;
-  color: #1E4062;
-  text-align: center;
-}
-
-.done-todo {
-  margin-top: 50px;
-  font-size: 24px;
-  font-weight: bold;
-  color: #1E4062;
+.list-todo, .done-todo {
+  font-size: 20px;
+  font-weight: 500;
+  color: #2d3436;
+  margin: 30px 0 15px;
   text-align: center;
 }
 
@@ -207,14 +253,28 @@ input {
 .progress-bar-container {
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 10px;
   min-width: 150px;
 }
 
 .progress-bar {
-  height: 8px;
-  background-color: #4CAF50;
-  border-radius: 4px;
+  flex: 1;
+  height: 6px;
+  background-color: #e8e8e8;
+  border-radius: 3px;
+  overflow: hidden;
+  position: relative;
+}
+
+.progress-bar::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: var(--progress);
+  background-color: #00b894;
+  border-radius: 3px;
 }
 
 .progress-text {
@@ -270,10 +330,6 @@ input {
   width: 60px;
 }
 
-.todo-description {
-  font-size: 24px;
-}
-
 .calendar-icon {
   cursor: pointer;
   margin-right: 5px;
@@ -303,15 +359,6 @@ input {
   color: #666;
   font-size: 14px;
   white-space: nowrap;
-}
-
-.revert-button {
-  border-color: #4689FF;
-  border-radius: 6px;
-  background-color: #4689FF;
-  color: white;
-  height: 32px;
-  cursor: pointer;
 }
 
 .deadline-note {
