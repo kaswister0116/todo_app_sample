@@ -19,6 +19,10 @@ def create_todo():
     priority = request.form.get('priority', '中')  # デフォルト値中
     notes = request.form.get('notes', '')  # デフォルト値空文字
 
+    # 期限が未設定の場合はエラーメッセージを表示
+    if not deadline:
+        return render_template('index.html', todos=db.get_todos(), current_date=date.today(), error="期限を設定してください。")
+
     # 優先度を数値に変換
     priority_map = {'高': 1, '中': 2, '低': 3}
     try:
@@ -57,6 +61,10 @@ def save_todo():
     priority = request.form.get('priority', '中')  # デフォルト値中
     progress = request.form.get('new_progress', '0')
     notes = request.form.get('new_notes', '')
+
+    # 期限が未設定の場合はエラーメッセージを表示
+    if not deadline:
+        return render_template('index.html', todos=db.get_todos(), current_date=date.today(), error="期限を設定してください。")
 
     if deadline:
         deadline = datetime.strptime(deadline, '%Y-%m-%d').date()
