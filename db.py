@@ -1,7 +1,7 @@
 import psycopg2, os
 from psycopg2 import errors
 
-username = "s.ka"
+username = "postgres"
 password = "postgres"
 # DBへの接続を開始する
 def connect_db():
