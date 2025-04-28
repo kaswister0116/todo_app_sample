@@ -1,13 +1,16 @@
 import psycopg2, os
 from psycopg2 import errors
 
+username = "s.ka"
+password = "postgres"
 # DBへの接続を開始する
 def connect_db():
-    username = os.getenv("USER")
+    # username = os.getenv("USER")
     try:
         connection = psycopg2.connect(
             dbname="todo_app",
             user=username,
+            password=password,
             host="localhost"
         )
     except errors.OperationalError:
@@ -15,16 +18,18 @@ def connect_db():
         connection = psycopg2.connect(
             dbname="todo_app",
             user=username,
+            password=password,
             host="localhost"
         )
     return connection
 
 # データベースを作成する
 def create_database():
-    username = os.getenv("USER")
+    # username = os.getenv("USER")
     con = psycopg2.connect(
         dbname="postgres",
         user=username,
+        password=password,
         host="localhost"
     )
     con.autocommit = True
