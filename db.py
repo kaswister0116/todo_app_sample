@@ -5,37 +5,34 @@ username = "postgres"
 password = "postgres"
 # DBへの接続を開始する
 def connect_db():
-    # username = os.getenv("USER")
+    username = os.getenv("USER")
     try:
         connection = psycopg2.connect(
-            dbname="todo_app",
+            dbname="todo_app_sample",
             user=username,
-            password=password,
             host="localhost"
         )
     except errors.OperationalError:
         create_database()
         connection = psycopg2.connect(
-            dbname="todo_app",
+            dbname="todo_app_sample",
             user=username,
-            password=password,
             host="localhost"
         )
     return connection
 
 # データベースを作成する
 def create_database():
-    # username = os.getenv("USER")
+    username = os.getenv("USER")
     con = psycopg2.connect(
         dbname="postgres",
         user=username,
-        password=password,
         host="localhost"
     )
     con.autocommit = True
     try:
         cursor = con.cursor()
-        cursor.execute("CREATE DATABASE todo_app")
+        cursor.execute("CREATE DATABASE todo_app_sample")
         cursor.close()
     finally:
         con.close()
@@ -212,3 +209,11 @@ def revert_todo(todo_id):
     finally:
         cur.close()
         con.close()
+
+
+
+{
+  "name": "山田太郎",
+  "email": "taro@example.com",
+  "hobbies": ["登山", "映画", "プログラミング"]
+}
